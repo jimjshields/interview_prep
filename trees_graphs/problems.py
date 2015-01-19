@@ -161,10 +161,114 @@ g2 = [[],
 	  [8, 13]]
 
 # findPath(g, 10, 1)
-findPath(g2, 1, 100)
+# findPath(g2, 1, 100)
 
-# def bfs(start, paths):
-# 	for i in graph[start[-1]]:
-# 		path = start + [i]
-# 		if start not in paths:
-# 			paths.append(start)
+# other implementation - http://eddmann.com/posts/depth-first-search-and-breadth-first-search-in-python/s
+
+graph = {'A': set(['B', 'C']),
+		 'B': set(['A', 'D', 'E']),
+		 'C': set(['A', 'F']),
+		 'D': set(['B']),
+		 'E': set(['B', 'F']),
+		 'F': set(['C', 'E']),
+		 'G': set(),
+		 'H': set('G')}
+
+# all connections, no recursion
+def dfs(graph, start):
+	"""Inputs: graph (implemented as dictionary, keys are nodes and values sets of connections),
+			   starting node (string)
+	   Output: set of all possible connections from start"""
+	# visited will be set of every node that's been visited; stack is what hasn't been explored
+	visited, stack = set(), [start]
+	# while there's something in the stack
+	while stack:
+		# vertex is the last value in the stack
+		vertex = stack.pop()
+		# if it hasn't been visited, add it to visited and add its connections to the stack
+		if vertex not in visited:
+			visited.add(vertex)
+			stack.extend(graph[vertex] - visited)
+			# start again until there's nothing in the stack
+	# return everything that's a connection
+	return visited
+
+# all connections, recursion
+def dfs_recur(graph, start, visited=None):
+	"""Inputs: graph (implemented as dictionary, keys are nodes and values sets of connections),
+			   starting node (string)
+	   Output: set of all possible connections from start"""
+	if visited is None:
+		visited = set()
+	visited.add(start)
+	for next in graph[start] - visited:
+		print visited
+		dfs_recur(graph, next, visited)
+	return visited
+
+# all paths - still a little confused
+def dfs_paths(graph, start, goal):
+	"""Inputs: graph (dictionary), start (key - node), goal(key - node)
+	   Outputs: all possible paths from start to goal in graph"""
+	stack = [(start, [start])]
+	while stack:
+		(vertex, path) = stack.pop()
+		# print (vertex, path)
+		for next in graph[vertex] - set(path):
+			print stack
+			if next == goal:
+				yield path + [next]
+			else:
+				stack.append((next, path + [next]))
+
+def bfs(graph, start):
+	"""Inputs: graph (dict), starting node (key)
+	   Output: all possible connections (set)"""
+	visited, queue = set(), [start]
+	while queue:
+		vertex = queue.pop(0)
+		if vertex not in visited:
+			visited.add(vertex)
+			queue.extend(graph[vertex] - visited)
+	return visited
+
+graph = {'A': set(['B', 'C']),
+		 'B': set(['A', 'D', 'E']),
+		 'C': set(['A', 'F']),
+		 'D': set(['B']),
+		 'E': set(['B', 'F']),
+		 'F': set(['C', 'E']),
+		 'G': set(),
+		 'H': set('G')}
+
+
+def bfs_paths(graph, start, goal):
+	"""Inputs: graph (dict), start (key - node), goal (key - node)
+	   Output: generator of all possible paths from start to goal, beginning w/ the shortest"""
+	queue = [(start, [start])]
+	# queue includes the first node and the current path
+	visited = set()
+	# instantiate visited as an empty set
+	while queue:
+		# while there's something in the queue
+		(vertex, path) = queue.pop(0)
+		# get rid of the current vertex and path and set it to variables
+		for next in graph[vertex] - set(path):
+			# for every node we haven't visited yet
+			if next == goal:
+				# if it's the last one
+				yield path + [next]
+				# finish and yield the current path and the goal node
+			else:
+				queue.append((next, path + [next]))
+				# otherwise, add the next node and the path and the next node to the queue
+
+def shortest_path(graph, start, goal):
+	"""Inputs: graph (dict), start (key - node), goal (key - node)
+	   Output: generator of shortest possible path b/w start and goal"""
+	try:
+		# if there's something yielded by bfs_paths, return the first one
+		return next(bfs_paths(graph, start, goal))
+	except StopIteration:
+		# if not, return None
+		return None
