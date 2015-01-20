@@ -272,3 +272,8 @@ def shortest_path(graph, start, goal):
 	except StopIteration:
 		# if not, return None
 		return None
+
+### skip some ###
+
+# wordplay
+
