@@ -277,3 +277,18 @@ def shortest_path(graph, start, goal):
 
 # wordplay
 
+import requests
+import re
+
+r = requests.get('http://norvig.com/ngrams/sowpods.txt')
+words = r.text.split('\r\n')
+
+def pattern_matches(words, pattern):
+	""" Input: Scrabble words (list)
+		Output: words that match the given pattern """
+	words = [i.lower() for i in words]
+	pattern_matches = [i for i in words if re.match(pattern, i)]
+	return pattern_matches
+
+# print pattern_matches(words, r'.*uu.*')
+print pattern_matches(words, r'q^u')
