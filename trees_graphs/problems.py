@@ -291,4 +291,4 @@ def pattern_matches(words, pattern):
 	return pattern_matches
 
 # print pattern_matches(words, r'.*uu.*')
-print pattern_matches(words, r'q^u')
+print pattern_matches(words, r'.*q^.*u.*')
