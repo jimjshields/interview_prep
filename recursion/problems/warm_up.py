@@ -38,15 +38,21 @@ def sumList(numList):
 # print sumList([1, 2, 3, 4, 5])
 
 # last index of given input
-def lastIndexOf(item, itemList, lastSoFar=0, count=0):
+# default return value if not found: -1
+def lastIndexOf(item, itemList, lastSoFar=-1, count=0):
+	# once it's gone through everything, or if it's empty,
+	# return what you've found
 	if itemList == []:
-		return -1
+		return lastSoFar
+	# start at the beginning
 	nextItem = itemList[0]
+	# next index, always
 	count += 1
 	if nextItem == item:
-		return lastIndexOf(item, itemList[1:], lastSoFar=count-1, count)
-	else:
-		return lastIndexOf(item, itemList[1:], lastSoFar, count)
+		# reset the lastSoFar - it's the index
+		lastSoFar = count - 1
+	# recursively call this on the smaller number set
+	return lastIndexOf(item, itemList[1:], lastSoFar, count)
 
-a = [2, 5, 1, 3, 2]
-print lastIndexOf(5, a)
+a = [5 for i in range(990)]
+# print lastIndexOf(5, a)
