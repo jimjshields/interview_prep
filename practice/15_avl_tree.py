@@ -61,6 +61,133 @@ class BinarySearchTree(object):
 	def __iter__(self):
 		return self.root.__iter__()
 
+	def put(self, key, value):
+		"""Inserts a node with key and value on the tree."""
+
+		if self.root:
+			self._put(key, value, self.root)
+		else:
+			self.root = TreeNode(key, value)
+		self.size += 1
+
+	def _put(self, key, value, current_node):
+		"""Private method for recursively inserting a node at the right place."""
+
+		if key < current_node.key:
+			if current_node.has_left_child():
+				self._put(key, value, current_node.left_child)
+			else:
+				current_node.left_child = TreeNode(key, value, parent=current_node)
+		else:
+			if current_node.has_right_child():
+				self._put(key, value, current_node.right_child)
+			else:
+				current_node.right_child = TreeNode(key, value, parent=current_node)
+
+	def __setitem__(self, key, value):
+		"""Overloads the [] operator for Binary Trees."""
+
+		self.put(key, value)
+
+	def get(self, key):
+		if self.root:
+			res = self._get(key, self.root)
+			if res:
+				return res.payload
+			else:
+				return None
+		else:
+			return None
+
+	def _get(self, key, current_node):
+		"""Returns the node specified by the given key or None."""
+
+		if not current_node:
+			return None
+		elif current_node.key == key:
+			return current_node
+		elif key < current_node.key:
+			return self._get(key, current_node.left_child)
+		else:
+			self._get(key, current_node.right_child)
+
+	def __getitem__(self, key):
+		"""Overloads the accessor operator."""
+
+		return self.get(key)
+
+	def __contains__(self, key):
+		"""Overloads the 'in' operator."""
+
+		if self._get(key, self.root):
+			return True
+		else:
+			return False
+
+	def delete(self, key):
+		"""Deletes a node."""
+
+		if self.size > 1:
+			node_to_remove = self._get(key, self.root)
+			if node_to_remove:
+				self.remove(node_to_remove)
+				self.size -= 1
+			else:
+				raise KeyError('Error, key not in tree.')
+		elif self.size == 1 and self.root.key == key:
+			self.root = None
+			self.size -= 1
+		else:
+			raise KeyError('Error, key not in tree.')
+
+	def __delitem__(self, key):
+		"""Overloads the 'del' operator."""
+
+		self.delete(key)
+
+	def remove(self, current_node):
+		"""Removes the node from the tree and updates all related nodes."""
+
+		# No children
+		if current_node.is_leaf():
+			if current_node == current_node.parent.left_child:
+				current_node.parent.left_child = None
+			else:
+				current_node.parent.right_child = None
+		elif current_node.has_both_children():
+			succ = current_node.find_successor()
+			succ.splice_out()
+			current_node.key = succ.key
+			current_node.payload = succ.payload
+
+		# One child
+		else:
+			if current_node.has_left_child():
+				if current_node.is_left_child():
+					current_node.left_child.parent = current_node.parent
+					current_node.parent.left_child = current_node.left_child
+				elif current_node.is_right_child():
+					current_node.right_child.parent = current_node.parent
+					current_node.parent.right_child = current_node.right_child
+				else:
+					current_node.replace_node_data(current_node.left_child.key,
+												   current_node.left_child.payload,
+												   current_node.left_child.left_child,
+												   current_node.left_child.right_child)
+			else:
+				if current_node.is_left_child():
+					current_node.right_child.parent = current_node.parent
+					current_node.parent.left_child = current_node.right_child
+				elif current_node.is_right_child():
+					current_node.right_child.parent = current_node.parent
+					current_node.parent.right_child = current_node.right_child
+				else:
+					current_node.replace_node_data(current_node.right_child.key,
+												   current_node.right_child.payload,
+												   current_node.right_child.left_child,
+												   current_node.right_child.right_child)
+
+
 class TreeNode(object):
 	"""A node in a BinarySearchTree."""
 
@@ -105,8 +232,64 @@ class TreeNode(object):
 		if self.has_right_child():
 			self.right_child.parent = self
 
+	def find_successor(self):
+		"""Returns the successor node, if there is one, for proper removal."""
+
+		succ = None
+		if self.has_right_child():
+			succ = self.right_child.find_min()
+		else:
+			if self.parent:
+				if self.is_left_child():
+					succ = self.parent
+				else:
+					self.parent.right_child = None
+					succ = self.parent.find_successor()
+					self.parent.right_child = self
+		return succ
+
+	def find_min(self):
+		"""Finds the minimum node from the given node."""
+
+		current = self
+		while current.has_left_child():
+			current = current.left_child
+		return current
+
+	def splice_out(self):
+		if self.is_leaf():
+			if self.is_left_child():
+				self.parent.left_child = None
+			else:
+				self.parent.right_child = None
+		elif self.has_any_children():
+			if self.has_left_child():
+				if self.is_left_child():
+					self.parent.left_child = self.left_child
+				else:
+					self.parent.right_child = self.right_child
+				self.left_child.parent = self.parent
+			else:
+				if self.is_left_child():
+					self.parent.left_child = self.right_child
+				else:
+					self.parent.right_child = self.right_child
+				self.right_child.parent = self.parent
+
+	def __iter__(self):
+		"""Overloads the iteration operator w/ an inorder traversal."""
+
+		if self:
+			if self.has_left_child():
+				for elem in self.left_child:
+					yield elem
+			yield self.key
+			if self.has_right_child():
+				for elem in self.right_child:
+					yield elem
 
 # Implementing an AVL tree as a class
 
 class AVLTree(object):
 	"""AVL Tree ADT."""
+
