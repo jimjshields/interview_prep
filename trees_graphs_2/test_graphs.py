@@ -60,6 +60,8 @@ class TestVertex(unittest.TestCase):
 	def test_init(self):
 		self.assertEqual(self.vertex.data, 1)
 		self.assertEqual(self.vertex.connections, [])
+		self.assertEqual(self.vertex.pred, None)
+		self.assertEqual(self.vertex.dist, 0)
 
 	def test_add_connection(self):
 		vertex_2 = Vertex(2)
@@ -73,6 +75,15 @@ class TestVertex(unittest.TestCase):
 		vertex_2 = Vertex(2)
 		self.vertex.add_connection(vertex_2)
 		self.assertEqual(self.vertex.get_connections(), [vertex_2])
+
+	def test_set_dist(self):
+		self.vertex.set_dist(1)
+		self.assertEqual(self.vertex.get_dist(), 1)
+
+	def test_set_pred(self):
+		self.vertex_2 = Vertex(2)
+		self.vertex_2.set_pred(self.vertex)
+		self.assertEqual(self.vertex_2.get_pred(), self.vertex)
 
 class TestQueue(unittest.TestCase):
 	"""Tests the representation of the queue ADT."""
@@ -160,18 +171,66 @@ class TestSearch(unittest.TestCase):
 		self.graph_2.add_edge(self.v10, self.v11)
 		self.graph_2.add_edge(self.v9, self.v12)
 
+		self.graph_3 = UndirectedGraph()
+		self.v1a = Vertex(1)
+		self.v2a = Vertex(2)
+		self.v3a = Vertex(3)
+		self.v4a = Vertex(4)
+		self.v5a = Vertex(5)
+		self.v6a = Vertex(6)
+		self.v7a = Vertex(7)
+		self.v8a = Vertex(8)
+		self.v9a = Vertex(9)
+		self.v10a = Vertex(10)
+		self.v11a = Vertex(11)
+		self.v12a = Vertex(12)
+		self.v13a = Vertex(13)
+		self.v14a = Vertex(14)
+		self.graph_3.add_edge(self.v1a, self.v2a)
+		self.graph_3.add_edge(self.v1a, self.v4a)
+		self.graph_3.add_edge(self.v4a, self.v5a)
+		self.graph_3.add_edge(self.v4a, self.v7a)
+		self.graph_3.add_edge(self.v7a, self.v13a)
+		self.graph_3.add_edge(self.v13a, self.v14a)
+		self.graph_3.add_edge(self.v14a, self.v8a)
+		self.graph_3.add_edge(self.v8a, self.v5a)
+		self.graph_3.add_edge(self.v5a, self.v2a)
+		self.graph_3.add_edge(self.v2a, self.v3a)
+		self.graph_3.add_edge(self.v3a, self.v11a)
+		self.graph_3.add_edge(self.v11a, self.v10a)
+		self.graph_3.add_edge(self.v10a, self.v6a)
+		self.graph_3.add_edge(self.v6a, self.v5a)
+		self.graph_3.add_edge(self.v6a, self.v9a)
+		self.graph_3.add_edge(self.v9a, self.v12a)
 
 	def test_bfs(self):
-		self.assertTrue(bfs(self.graph, self.va, self.ve))
-		self.assertFalse(bfs(self.graph, self.vc, self.ve))
+		bfs(self.graph, self.va)
+		self.assertEqual(self.ve.get_color(), 'black')
+		self.assertEqual(self.va.get_dist(), 0)
+		self.assertFalse(self.ve.get_dist() == 1)
 
 	def test_bfs_2(self):
-		self.assertTrue(bfs(self.graph_2, self.v1, self.v10))
-		self.assertFalse(bfs(self.graph_2, self.v1, self.v13))
+		bfs(self.graph_2, self.v1)
+		self.assertEqual(self.v1.get_color(), 'black')
+		self.assertEqual(self.v1.get_dist(), 0)
+		self.assertFalse(self.v10.get_dist() == 1)
+		self.assertTrue(self.v10.get_dist() == 4)
 
 	def test_bfs_return_path(self):
-		self.assertEqual([1, 2, 5, 8, 6, 10], dfs_path(self.graph_2, self.v1, self.v10))
-		self.assertEqual([7, 4, 1, 2, 5, 8, 6, 10], dfs_path(self.graph_2, self.v7, self.v10))
+		path_2 = bfs_path(self.graph_2, self.v7, self.v12)
+		self.assertEqual([7, 4, 1, 2, 5, 6, 9, 12], path_2)
+
+	def test_bfs_return_path_2(self):
+		path = bfs_path(self.graph_2, self.v1, self.v10)
+		self.assertEqual([1, 2, 5, 6, 10], path)
+
+	def test_bfs_return_path_3(self):
+		path = bfs_path(self.graph_2, self.va, self.ve)
+		self.assertEqual(['A', 'D', 'E'], path)
+
+	def test_bfs_return_path_4(self):
+		path = bfs_path(self.graph_3, self.v1a, self.v12a)
+		self.assertEqual([1, 4, 5, 6, 9, 12], path)
 
 if __name__ == '__main__':
 	unittest.main()

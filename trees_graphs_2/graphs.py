@@ -53,6 +53,9 @@ class Vertex(object):
 
 		self.data = data
 		self.connections = []
+		self.pred = None
+		self.dist = 0
+		self.color = 'white'
 
 	def add_connection(self, other):
 		"""Adds a connection to the given node."""
@@ -68,6 +71,36 @@ class Vertex(object):
 		"""Returns a list of all connections of the vertex."""
 
 		return self.connections
+
+	def set_dist(self, dist):
+		"""Sets the distance of the vertex from the starting vertex."""
+
+		self.dist = dist
+
+	def get_dist(self):
+		"""Returns the distance from the starting vertex."""
+
+		return self.dist
+
+	def set_pred(self, pred):
+		"""Sets the predecessor vertex of the current vertex."""
+
+		self.pred = pred
+
+	def get_pred(self):
+		"""Returns the predecessor of the current vertex."""
+
+		return self.pred
+
+	def set_color(self, color):
+		"""Sets the color of the current vertex."""
+
+		self.color = color
+
+	def get_color(self):
+		"""Returns the color of the current vertex."""
+
+		return self.color
 
 class Queue(object):
 	"""Represents a queue ADT."""
@@ -105,24 +138,32 @@ class Stack(object):
 	def size(self):
 		return len(self.items)
 
-def bfs(graph, vertex_1, vertex_2):
+def bfs(graph, vertex_1):
 	"""Checks for whether vertex_2 is accessible from vertex_1 in graph."""
 
 	vertex_q = Queue()
 	vertex_q.enqueue(vertex_1)
-	visited = []
-	found = False
 
-	while vertex_q.size() > 0 and not found:
+	while vertex_q.size() > 0:
 		current_v = vertex_q.dequeue()
+		current_v.set_color('gray')
 		for nbr in current_v.get_connections():
-			if nbr == vertex_2:
-				found = True
-			if nbr not in visited:
+			if nbr.get_color() == 'white':
 				vertex_q.enqueue(nbr)
-		visited.append(current_v)
+				nbr.set_dist(current_v.get_dist() + 1)
+				nbr.set_pred(current_v)
+		current_v.set_color('black')
 
-	return found
+def bfs_path(graph, vertex_1, vertex_2):
+	"""Returns a bfs path from vertex 1 to vertex 2."""
+
+	bfs(graph, vertex_1)
+	current = vertex_2
+	path = [current]
+	while current.get_pred() is not None:
+		path.insert(0, current.get_pred())
+		current = current.get_pred()
+	return [v.get_data() for v in path]
 
 def dfs_path(graph, vertex_1, vertex_2):
 	"""Returns a list of all paths from vertex_1 to vertex_2 or None."""
