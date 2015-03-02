@@ -3,6 +3,13 @@
 # Remember: need two separate function (merge_sort and merge)
 # Careful - pay attention to details (splitting list in half)
 
+# Complexity
+# Worst case: O(nlog(n))
+# Avg. case: O(nlog(n))
+# Best case: O(nlog(n))
+
+# Aux. space: O(n)
+
 def merge_sort(a_list):
 	"""Returns a sorted list of comparable items."""
 

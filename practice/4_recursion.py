@@ -31,3 +31,9 @@ def convert_base(num, to_base):
 		result += convert_base(num/to_base, to_base) + str(digits[num % to_base])
 
 	return result
+
+def fibonacci(max_num):
+	if max_num <= 1:
+		return 1
+	else:
+		return fibonacci(max_num - 1) + fibonacci(max_num - 2)
