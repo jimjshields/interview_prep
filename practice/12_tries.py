@@ -19,36 +19,55 @@
 # Needs a Node class and a Trie class
 # Unfinished for the moment
 
-import unittest
+# import unittest
 
-class Node(object):
-	"""A node to be filled in by trie methods."""
+# class Node(object):
+# 	"""A node to be filled in by trie methods."""
 
-	def __init__(self, key, children):
-		"""A node with a key and empty list of children."""
+# 	def __init__(self, key, children):
+# 		"""A node with a key and empty list of children."""
 
-		self.key = key
-		self.children = {}
+# 		self.key = key
+# 		self.children = {}
 
-	def add_child(self, key):
-		"""Add a child with a given key to the node."""
+# 	def add_child(self, key):
+# 		"""Add a child with a given key to the node."""
 
-		self.children[key] = 
+# 		self.children[key] = 
 
-class Trie(object):
-	"""A Trie to be filled in by nodes."""
+# class Trie(object):
+# 	"""A Trie to be filled in by nodes."""
 
-	def __init__(self):
-		"""An empty trie."""
+# 	def __init__(self):
+# 		"""An empty trie."""
 
-		self.root = Node(None)
+# 		self.root = Node(None)
 
-	def add_word(self, word):
-		"""Add a word to the trie."""
+# 	def add_word(self, word):
+# 		"""Add a word to the trie."""
 
-		start = word[0]
-		if start in self.root.children:
-			start = self.root.children[start]
-			self.add_word(start, word[1:])
-		else:
-			self.root.children[start].add_word(start, word[1:])
+# 		start = word[0]
+# 		if start in self.root.children:
+# 			start = self.root.children[start]
+# 			self.add_word(start, word[1:])
+# 		else:
+# 			self.root.children[start].add_word(start, word[1:])
+
+
+# https://reterwebber.wordpress.com/2014/01/22/data-structure-in-python-trie/
+# http://www.geeksforgeeks.org/trie-delete/
+
+def make_trie(*args):
+	"""Make a trie by given words."""
+
+	trie = {}
+
+	for word in args:
+		if type(word) != str:
+			raise TypeError('Trie only works with strings!')
+		temp_trie = trie
+		for letter in word:
+			temp_trie = temp_trie.setdefault(letter, {})
+		temp_trie = temp_trie.setdefault('_end_', '_end_')
+
+	return trie
