@@ -57,6 +57,6 @@ def is_bst(node, nodes=[]):
 		is_bst(current.left)
 		nodes.append(current)
 		is_bst(current.right)
-	print [node.val for node in nodes]		
+	
 
 is_bst(n6)
