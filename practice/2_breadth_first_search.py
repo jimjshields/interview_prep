@@ -98,3 +98,15 @@ class Graph(object):
 
 	def add_vertex(self, vertex):
 		"""Adds a vertex to the graph."""
+
+from Queue import Queue
+
+def bfs(graph, start):
+	"""Searches a graph breadth-first."""
+
+	vertex_q = Queue()
+	vertex_q.put(start)
+
+	while vertex_q.qsize() > 0:
+		current = vertex_q.get()
+		for 
