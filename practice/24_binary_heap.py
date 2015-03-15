@@ -31,13 +31,14 @@ class BinaryHeap(object):
 		"""Percolate the given key up to where it should be."""
 
 		current_index = size
-		while key < self.heap[current_index // 2]:
-			child = key
-			parent = self.heap[current_index // 2]
+		while current_index // 2 > 0:
+			if key < self.heap[current_index // 2]:
+				child = key
+				parent = self.heap[current_index // 2]
 
-			# Switch parent and child.
-			self.heap[current_index], self.heap[current_index // 2] = parent, child
-			current_index //= 2
+				# Switch parent and child.
+				self.heap[current_index], self.heap[current_index // 2] = parent, child
+				current_index //= 2
 
 	def del_min(self):
 		"""Deletes and returns the min key and reorders the binary heap."""
@@ -47,10 +48,30 @@ class BinaryHeap(object):
 		# Get rid of the last key and put it at the root, in order to maintain
 		# the binary heap structure property.
 		self.heap[1] = self.heap.pop()
-		current_size -= 1
+		self.current_size -= 1
 		root = self.heap[1]
 
 		# Move the root down to where it should be, reordering it correctly.
-		self.perc_down(root, current_size)
+		self.perc_down(root, self.current_size)
+
+		return min_key
 
 	def perc_down(self, root, size):
+		"""Given the root and current heap size, moves the root down to 
+		   where it should be."""
+
+		current_index = 1
+
+		# Continue looping while the root is greater than both of its children.
+		while root > self.heap[current_index * 2] and root > self.heap[(current_index * 2) + 1]:
+
+			# Check for which of the children is smaller, that should be the new parent.
+			if self.heap[current_index * 2] > self.heap[(current_index * 2) + 1]:
+				min_child_index = (current_index * 2) + 1
+			else:
+				min_child_index = (current_index * 2)
+			min_child = self.heap[min_child_index]
+
+			# Switch the root and the min child of the root.
+			self.heap[current_index], self.heap[min_child_index] = min_child, root
+
