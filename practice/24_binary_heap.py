@@ -44,7 +44,13 @@ class BinaryHeap(object):
 
 		min_key = self.heap[1]
 
-		# For clarity's sake.
-		self.heap[1] = None
-		
+		# Get rid of the last key and put it at the root, in order to maintain
+		# the binary heap structure property.
+		self.heap[1] = self.heap.pop()
+		current_size -= 1
+		root = self.heap[1]
 
+		# Move the root down to where it should be, reordering it correctly.
+		self.perc_down(root, current_size)
+
+	def perc_down(self, root, size):
