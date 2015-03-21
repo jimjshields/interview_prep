@@ -57,17 +57,64 @@
 # https://reterwebber.wordpress.com/2014/01/22/data-structure-in-python-trie/
 # http://www.geeksforgeeks.org/trie-delete/
 
-def make_trie(*args):
-	"""Make a trie by given words."""
+# def make_trie(*args):
+# 	"""Make a trie by given words."""
 
-	trie = {}
+# 	trie = {}
 
-	for word in args:
-		if type(word) != str:
-			raise TypeError('Trie only works with strings!')
-		temp_trie = trie
-		for letter in word:
-			temp_trie = temp_trie.setdefault(letter, {})
-		temp_trie = temp_trie.setdefault('_end_', '_end_')
+# 	for word in args:
+# 		if type(word) != str:
+# 			raise TypeError('Trie only works with strings!')
+# 		temp_trie = trie
+# 		for letter in word:
+# 			temp_trie = temp_trie.setdefault(letter, {})
+# 		temp_trie = temp_trie.setdefault('_end_', '_end_')
 
-	return trie
+# 	return trie
+
+# ex_trie = {'':
+				# {'h':
+					# {'e':
+						# {'l':
+							# {'l':
+								# {'o':
+									# None}}}}}}
+
+def find(node, key):
+	"""Returns boolean for whether a string is in a trie."""
+
+	for char in key:
+		if char not in node:
+			return False
+		else:
+			node = node[char]
+	return True
+
+def insert(node, string):
+	i = 0
+	length = len(string)
+
+	while i < length:
+		insertion_char = string[i]
+		if i == length - 1:
+			node[insertion_char] = '_end_'
+		elif insertion_char in node:
+			node = node[insertion_char]
+		else:
+			print node
+			print insertion_char
+			node[insertion_char] = {}
+			node = node[insertion_char]
+
+		i += 1
+
+my_trie = {}
+
+# insert(my_trie, 'hello')
+# insert(my_trie, 'howdy')
+# insert(my_trie, 'world')
+insert(my_trie, 'holy')
+insert(my_trie, 'holymoly')
+
+from pprint import pprint
+pprint(my_trie)
