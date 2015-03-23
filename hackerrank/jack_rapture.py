@@ -55,18 +55,12 @@ class Vertex(object):
 		return self.cost
 
 
-# n,l = map(int,raw_input().split())
+n,l = map(int,raw_input().split())
 graph = Graph()
 
-# for i in xrange(l):
-# 	a, b, cost = map(int,raw_input().split())
-# 	graph.add_edge(a, b, cost)
-
-graph.add_edge(1, 2, 60)
-graph.add_edge(3, 5, 70)
-graph.add_edge(1, 4, 120)
-graph.add_edge(4, 5, 150)
-graph.add_edge(2, 3, 80)
+for i in xrange(l):
+	a, b, cost = map(int,raw_input().split())
+	graph.add_edge(a, b, cost)
 
 def find_cheapest_route(graph, start, end):
 	"""Given a graph with a cost for each edge, return the cheapest cost from start to end."""
