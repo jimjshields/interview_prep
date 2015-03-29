@@ -47,3 +47,32 @@ print sdoor.status
 sdoor.locked = False
 sdoor.open()
 print sdoor.status
+
+# Simple composition example
+# Primary goal — relax coupling b/w objects
+
+class SecurityDoor(object):
+	color = 'gray'
+	locked = True
+
+	def __init__(self, number, status):
+		self.door = Door(number, status)
+
+	def open(self):
+		if self.locked:
+			return
+		self.door.open()
+
+	def close(self):
+		self.door.close()
+
+# Fully composed
+# Better for memory — doesn't make a copy of the entire class to be delegated to the child
+
+class ComposedDoor(object):
+
+	def __init__(self, number, status):
+		self.door = Door(number, status)
+
+	def __getattr__(self, attr):
+		return getattr(self.door, attr)
